@@ -1,0 +1,35 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  transition: 1s;
+}
+body{
+	background: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/f8cbba04-d884-4dc3-b9ef-9979145c22d1/d68d6tc-70c2835d-c837-4d81-ab0f-5d185d6d592a.jpg');
+  	/* Full height */
+  	height: 100%;
+  	/* Center and scale the image nicely */
+  	background-position: center;
+  	background-repeat: no-repeat;
+  	background-size: cover;
+}
+
+.all-scroll{
+	cursor: all-scroll;
+}
+
+.drag-element{
+	position: absolute;
+	transform: translateY(-100000em);
+}
+
+.about{
+	margin: 1em;
+	background: #fafafa;
+	padding: 10px;
+}
+
+.center{
+	position: absolute;
+	top: 25%;
+	left: 25%;
+}
