@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS CCP Glossary - CLF-C02</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f1b2d;color:#e1e8f0;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:20px}
+header{text-align:center;padding:30px 0;border-bottom:2px solid #ff9900}
+header h1{color:#ff9900;font-size:2em;margin-bottom:8px}
+header p{color:#8899aa;font-size:0.95em}
+.back-link{display:inline-block;margin:15px 0;padding:8px 18px;background:#1e3a5f;color:#e1e8f0;border:1px solid #2a4a6f;border-radius:8px;text-decoration:none;font-size:0.9em;transition:all 0.2s}
+.back-link:hover{background:#2a4a6f;border-color:#ff9900}
+.search-bar{margin:25px 0}
+.search-bar input{width:100%;padding:14px 18px;background:#162a45;border:2px solid #1e3a5f;border-radius:8px;color:#e1e8f0;font-size:1em;outline:none;transition:border-color 0.2s}
+.search-bar input:focus{border-color:#ff9900}
+.search-bar input::placeholder{color:#5a7a9a}
+.summary{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0;padding:15px;background:#162a45;border-radius:8px;border:1px solid #1e3a5f}
+.summary a{padding:6px 14px;background:#1e3a5f;color:#aabbcc;border-radius:20px;text-decoration:none;font-size:0.8em;transition:all 0.2s}
+.summary a:hover{background:#ff9900;color:#0f1b2d}
+.category-card{background:#162a45;border:1px solid #1e3a5f;border-radius:12px;padding:24px;margin:20px 0;scroll-margin-top:20px}
+.category-card.hidden{display:none}
+.category-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #1e3a5f}
+.category-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.category-icon svg{width:26px;height:26px;fill:#fff}
+.category-title{font-size:1.3em;font-weight:700;color:#ff9900}
+.category-count{font-size:0.8em;color:#5a7a9a;margin-left:8px;white-space:nowrap}
+.services-list{display:flex;flex-direction:column;gap:12px}
+.service-item{padding:14px 18px;background:#1a3050;border:1px solid #1e3a5f;border-radius:8px;transition:border-color 0.2s}
+.service-item:hover{border-color:#2a4a6f}
+.service-name{font-size:1em;font-weight:600;color:#e1e8f0;margin-bottom:5px}
+.service-desc{font-size:0.88em;line-height:1.6;color:#aabbcc}
+.service-item.hidden{display:none}
+.no-results{text-align:center;padding:40px 20px;color:#5a7a9a;font-size:1.1em}
+footer{text-align:center;padding:30px 0;color:#5a7a9a;font-size:0.85em}
+@media(max-width:600px){
+  .container{padding:10px}
+  header h1{font-size:1.5em}
+  .category-card{padding:16px}
+  .category-title{font-size:1.1em}
+  .summary{gap:5px}
+  .summary a{padding:4px 10px;font-size:0.72em}
+}
+@media(max-width:360px){
+  header h1{font-size:1.3em}
+  .category-card{padding:14px}
+  .service-item{padding:12px 14px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AWS CCP Service Glossary</h1>
+<p>CLF-C02 In-Scope AWS Services &mdash; Organized by Category</p>
+<a href="index.html" class="back-link">&larr; Back to Mock Exam</a>
+</header>
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="Search services or categories..." onkeyup="filterContent()">
+</div>
+<div class="summary" id="summary"></div>
+<div id="glossary-container"></div>
+<div id="no-results" class="no-results hidden">No results found. Try a different search term.</div>
+<footer>
+  <a href="index.html" class="back-link">&larr; Back to Mock Exam</a>
+</footer>
+</div>
+<script src="glossary.js"></script>
+<script>
+const container = document.getElementById('glossary-container');
+const summary = document.getElementById('summary');
+
+// Render summary links
+let summaryHtml = '';
+let totalServices = 0;
+GLOSSARY.forEach((cat, idx) => {
+  totalServices += cat.services.length;
+  const safeId = 'cat-' + idx;
+  summaryHtml += `<a href="#${safeId}" onclick="scrollToCategory('${safeId}')">${cat.category} (${cat.services.length})</a>`;
+});
+summary.innerHTML = `<span style="color:#ff9900;font-weight:600;font-size:0.85em;align-self:center;margin-right:8px">${totalServices} services:</span>` + summaryHtml;
+
+// Render categories
+let html = '';
+GLOSSARY.forEach((cat, idx) => {
+  const safeId = 'cat-' + idx;
+  let servicesHtml = cat.services.map(s => `
+    <div class="service-item">
+      <div class="service-name">${s.name}</div>
+      <div class="service-desc">${s.desc}</div>
+    </div>
+  `).join('');
+  html += `
+    <div class="category-card" id="${safeId}" data-category="${cat.category.toLowerCase()}">
+      <div class="category-header">
+        <div class="category-icon" style="background:${cat.color}">
+          <svg viewBox="0 0 24 24"><path d="${cat.icon}"/></svg>
+        </div>
+        <span class="category-title">${cat.category}</span>
+        <span class="category-count">${cat.services.length} services</span>
+      </div>
+      <div class="services-list">${servicesHtml}</div>
+    </div>
+  `;
+});
+container.innerHTML = html;
+
+function scrollToCategory(id) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function filterContent() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.category-card');
+  const serviceItems = document.querySelectorAll('.service-item');
+  const noResults = document.getElementById('no-results');
+  let visibleCards = 0;
+
+  cards.forEach(card => {
+    const categoryName = card.dataset.category;
+    let hasVisibleService = false;
+
+    card.querySelectorAll('.service-item').forEach(item => {
+      const text = (item.querySelector('.service-name').textContent + ' ' + item.querySelector('.service-desc').textContent).toLowerCase();
+      const matches = !query || text.includes(query) || categoryName.includes(query);
+      item.classList.toggle('hidden', !matches);
+      if (matches) hasVisibleService = true;
+    });
+
+    card.classList.toggle('hidden', !hasVisibleService);
+    if (hasVisibleService) visibleCards++;
+  });
+
+  noResults.classList.toggle('hidden', visibleCards > 0);
+}
+</script>
+</body>
+</html>

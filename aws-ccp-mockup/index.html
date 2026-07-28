@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS CCP Mock Exam - CLF-C02</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f1b2d;color:#e1e8f0;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:20px}
+header{text-align:center;padding:30px 0;border-bottom:2px solid #ff9900}
+header h1{color:#ff9900;font-size:2em;margin-bottom:8px}
+header p{color:#8899aa;font-size:0.95em}
+.stats-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0;margin:20px 0;border-bottom:1px solid #1e3a5f;flex-wrap:wrap;gap:10px}
+.stats-bar .stat{font-size:0.9em;color:#8899aa}
+.stats-bar .stat span{color:#ff9900;font-weight:700}
+.progress-bar{width:100%;height:6px;background:#1e3a5f;border-radius:3px;margin:15px 0;overflow:hidden}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#ff9900,#ffb84d);border-radius:3px;transition:width 0.4s ease}
+.domain-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.75em;font-weight:600;margin-bottom:12px}
+.domain-1{background:#1a3a2a;color:#4caf50}
+.domain-2{background:#3a1a1a;color:#f44336}
+.domain-3{background:#1a2a3a;color:#2196f3}
+.domain-4{background:#3a2a1a;color:#ff9800}
+.question-card{background:#162a45;border:1px solid #1e3a5f;border-radius:12px;padding:28px;margin:20px 0;transition:border-color 0.3s}
+.question-card.answered-correct{border-color:#4caf50}
+.question-card.answered-wrong{border-color:#f44336}
+.question-number{color:#ff9900;font-weight:700;font-size:0.85em;margin-bottom:8px}
+.question-text{font-size:1.05em;line-height:1.6;margin-bottom:8px;color:#e1e8f0}
+.question-type{font-size:0.78em;color:#ff9900;font-weight:600;margin-bottom:15px}
+.options{list-style:none;display:flex;flex-direction:column;gap:10px}
+.option{display:flex;align-items:flex-start;padding:12px 16px;background:#1a3050;border:2px solid #1e3a5f;border-radius:8px;cursor:pointer;transition:all 0.2s;gap:10px}
+.option:hover{border-color:#ff9900;background:#1e3a5f}
+.option.selected{border-color:#ff9900;background:#2a3a50}
+.option.correct{border-color:#4caf50;background:#1a3a2a}
+.option.wrong{border-color:#f44336;background:#3a1a1a}
+.option.disabled{pointer-events:none;opacity:0.7}
+.option.correct.disabled,.option.wrong.disabled,.option.selected.disabled{opacity:1}
+.option-letter{min-width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#1e3a5f;color:#8899aa;font-weight:700;font-size:0.85em;flex-shrink:0}
+.option.selected .option-letter{background:#ff9900;color:#0f1b2d}
+.option.correct .option-letter{background:#4caf50;color:#fff}
+.option.wrong .option-letter{background:#f44336;color:#fff}
+.option-text{font-size:0.95em;line-height:1.5;padding-top:3px}
+.explanation{margin-top:16px;padding:16px 18px;background:#1a2a3a;border-left:3px solid #ff9900;border-radius:0 8px 8px 0;font-size:0.92em;line-height:1.7;color:#bccdd8;display:none}
+.explanation.visible{display:block}
+.explanation .label{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.8em;font-weight:700;margin-right:8px}
+.explanation .label.correct-label{background:#1a3a2a;color:#4caf50}
+.explanation .label.wrong-label{background:#3a1a1a;color:#f44336}
+.btn{padding:12px 28px;border:none;border-radius:8px;font-size:1em;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-primary{background:#ff9900;color:#0f1b2d}
+.btn-primary:hover{background:#ffb84d}
+.btn-secondary{background:#1e3a5f;color:#e1e8f0;border:1px solid #2a4a6f}
+.btn-secondary:hover{background:#2a4a6f}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.nav-buttons{display:flex;justify-content:space-between;align-items:center;margin:25px 0;flex-wrap:wrap;gap:10px}
+.results-screen{text-align:center;padding:40px 20px}
+.results-screen h2{color:#ff9900;font-size:2em;margin-bottom:20px}
+.score-circle{width:180px;height:180px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:30px auto;border:8px solid;font-size:3em;font-weight:700}
+.score-circle.pass{border-color:#4caf50;color:#4caf50}
+.score-circle.fail{border-color:#f44336;color:#f44336}
+.score-circle small{font-size:0.3em;color:#8899aa;font-weight:400}
+.domain-results{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:30px 0;text-align:left}
+.domain-result-card{background:#162a45;padding:18px;border-radius:10px;border:1px solid #1e3a5f}
+.domain-result-card h4{font-size:0.85em;color:#8899aa;margin-bottom:8px}
+.domain-result-card .score{font-size:1.5em;font-weight:700;color:#ff9900}
+.domain-result-card .bar{height:4px;background:#1e3a5f;border-radius:2px;margin-top:8px;overflow:hidden}
+.domain-result-card .bar .fill{height:100%;border-radius:2px}
+.start-screen{text-align:center;padding:60px 20px}
+.start-screen h2{color:#ff9900;font-size:1.8em;margin-bottom:15px}
+.start-screen p{color:#8899aa;margin-bottom:8px;font-size:0.95em}
+.start-screen .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px auto;max-width:500px;text-align:left}
+.start-screen .info-item{background:#162a45;padding:14px;border-radius:8px;border:1px solid #1e3a5f}
+.start-screen .info-item h4{color:#ff9900;font-size:0.8em;margin-bottom:4px}
+.start-screen .info-item p{color:#e1e8f0;font-size:0.95em}
+.timer{font-size:1.1em;color:#ff9900;font-weight:600}
+.question-nav{display:flex;flex-wrap:wrap;gap:4px;margin:15px 0}
+.question-nav button{width:32px;height:32px;border:1px solid #1e3a5f;background:#162a45;color:#8899aa;border-radius:4px;cursor:pointer;font-size:0.75em;font-weight:600;transition:all 0.2s}
+.question-nav button:hover{border-color:#ff9900}
+.question-nav button.current{background:#ff9900;color:#0f1b2d;border-color:#ff9900}
+.question-nav button.answered{background:#1e3a5f;color:#e1e8f0;border-color:#2a4a6f}
+.question-nav button.correct-nav{background:#1a3a2a;color:#4caf50;border-color:#4caf50}
+.question-nav button.wrong-nav{background:#3a1a1a;color:#f44336;border-color:#f44336}
+.hidden{display:none}
+*{-webkit-tap-highlight-color:transparent}
+/* Tablet and small desktop */
+@media(max-width:768px){
+  .container{padding:16px}
+  .question-card{padding:22px}
+  .question-nav{max-height:120px;overflow-y:auto;padding:4px;border:1px solid #1e3a5f;border-radius:8px}
+}
+/* Mobile phones */
+@media(max-width:600px){
+  .container{padding:10px}
+  header{padding:20px 0}
+  header h1{font-size:1.4em}
+  header p{font-size:0.85em}
+  .question-card{padding:16px;margin:12px 0}
+  .domain-results{grid-template-columns:1fr}
+  .start-screen{padding:40px 15px}
+  .start-screen .info-grid{grid-template-columns:1fr;gap:8px}
+  .stats-bar{padding:10px 0;gap:6px}
+  .stats-bar .stat{font-size:0.82em}
+  .timer{font-size:0.95em}
+  .question-text{font-size:1em;line-height:1.55}
+  .question-number{font-size:0.8em}
+  .question-type{font-size:0.74em}
+  .option{padding:14px 12px;gap:10px;min-height:48px}
+  .option-text{font-size:0.92em;line-height:1.45}
+  .option-letter{min-width:30px;height:30px;font-size:0.8em}
+  .explanation{padding:12px 14px;font-size:0.85em;line-height:1.6}
+  .btn{padding:11px 22px;font-size:0.95em}
+  .btn:disabled{opacity:0.4}
+  .nav-buttons{margin:18px 0;gap:8px}
+  .nav-buttons .btn{flex:1;min-width:auto;padding:11px 16px}
+  .nav-buttons > div{flex:1;justify-content:center}
+  /* Question nav: scrollable, bigger touch targets */
+  .question-nav{max-height:100px;overflow-y:auto;gap:5px;padding:6px;border:1px solid #1e3a5f;border-radius:8px;scrollbar-width:thin}
+  .question-nav button{width:36px;height:36px;font-size:0.7em}
+  /* Results */
+  .results-screen{padding:30px 15px}
+  .results-screen h2{font-size:1.5em}
+  .score-circle{width:140px;height:140px;font-size:2.4em;border-width:6px}
+  .domain-result-card{padding:14px}
+  .domain-result-card h4{font-size:0.8em}
+  .domain-result-card .score{font-size:1.3em}
+  .start-screen .btn-primary{width:100%;padding:14px}
+}
+/* Very small phones */
+@media(max-width:360px){
+  .container{padding:8px}
+  header h1{font-size:1.25em}
+  .question-card{padding:14px}
+  .option{padding:12px 10px}
+  .option-text{font-size:0.88em}
+  .question-nav button{width:32px;height:32px}
+  .stat{font-size:0.78em!important}
+  .timer{font-size:0.9em}
+  .btn{padding:10px 14px;font-size:0.9em}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AWS Certified Cloud Practitioner</h1>
+<p>CLF-C02 Mock Exam &mdash; 200 Questions</p>
+</header>
+<div id="app"></div>
+</div>
+<script src="questions.js"></script>
+<script>
+let state={started:false,current:0,answers:{},submitted:false,timer:null,seconds:0,showReview:false};
+const app=document.getElementById('app');
+const domainNames={1:"Cloud Concepts",2:"Security & Compliance",3:"Cloud Technology & Services",4:"Billing, Pricing & Support"};
+const domainClasses={1:"domain-1",2:"domain-2",3:"domain-3",4:"domain-4"};
+const letters=['A','B','C','D','E','F'];
+
+function renderStart(){
+app.innerHTML=`
+<div class="start-screen">
+<h2>AWS CCP Mock Exam</h2>
+<p>CLF-C02 Practice Test &mdash; 200 Questions</p>
+<p style="color:#ff9900;margin-top:10px">Passing score: 700/1000 (70%)</p>
+<div class="info-grid">
+<div class="info-item"><h4>Domain 1</h4><p>Cloud Concepts (24%)</p></div>
+<div class="info-item"><h4>Domain 2</h4><p>Security & Compliance (30%)</p></div>
+<div class="info-item"><h4>Domain 3</h4><p>Cloud Technology & Services (34%)</p></div>
+<div class="info-item"><h4>Domain 4</h4><p>Billing, Pricing & Support (12%)</p></div>
+</div>
+<p style="margin-top:20px;color:#8899aa">Multiple choice &amp; multiple response questions included.<br>No penalty for guessing. Timer starts when you begin.</p>
+<div style="display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="startExam()" style="font-size:1.1em;padding:15px 40px">Start Exam</button>
+<a href="glossary.html" class="btn btn-secondary" style="text-decoration:none;font-size:1.1em;padding:15px 30px;display:inline-block">Service Glossary</a>
+</div>
+</div>`;
+}
+
+function startExam(){
+state.started=true;state.seconds=0;
+state.timer=setInterval(()=>{state.seconds++;updateTimer()},1000);
+renderQuestion();
+}
+
+function updateTimer(){
+const el=document.getElementById('timer');
+if(el){const m=Math.floor(state.seconds/60);const s=state.seconds%60;el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+}
+
+function isMulti(q){return q.type==='multiple'}
+
+function renderQuestion(){
+const q=QUESTIONS[state.current];
+const answered=state.answers[state.current]!==undefined;
+const multi=isMulti(q);
+const userAns=state.answers[state.current]||[];
+let optionsHtml=q.options.map((opt,i)=>{
+let cls='option';
+if(answered&&state.submitted){
+cls+=' disabled';
+if(q.answer.includes(i))cls+=' correct';
+else if(userAns.includes(i))cls+=' wrong';
+}else if(userAns.includes(i)){cls+=' selected'}
+return`<li class="${cls}" onclick="selectOption(${i})"><span class="option-letter">${letters[i]}</span><span class="option-text">${opt}</span></li>`;
+}).join('');
+let explHtml='';
+if(answered&&state.submitted){
+const isCorrect=arraysEqual(userAns.slice().sort(),q.answer.slice().sort());
+explHtml=`<div class="explanation visible"><span class="label ${isCorrect?'correct-label':'wrong-label'}">${isCorrect?'CORRECT':'INCORRECT'}</span>${q.explanation}</div>`;
+}
+const answeredCount=Object.keys(state.answers).length;
+const pct=(answeredCount/QUESTIONS.length*100).toFixed(0);
+let navDots=QUESTIONS.map((_,i)=>{
+let cls='';
+if(i===state.current)cls='current';
+else if(state.submitted&&state.answers[i]!==undefined){
+const c=arraysEqual((state.answers[i]||[]).slice().sort(),QUESTIONS[i].answer.slice().sort());
+cls=c?'correct-nav':'wrong-nav';
+}else if(state.answers[i]!==undefined)cls='answered';
+return`<button class="${cls}" onclick="goTo(${i})">${i+1}</button>`;
+}).join('');
+app.innerHTML=`
+<div class="stats-bar">
+<div class="stat">Question <span>${state.current+1}</span> of <span>${QUESTIONS.length}</span></div>
+<div class="stat">Answered: <span>${answeredCount}</span></div>
+<div class="timer" id="timer">00:00</div>
+</div>
+<div class="progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+<div class="question-nav">${navDots}</div>
+<div class="question-card ${answered&&state.submitted?(arraysEqual(userAns.slice().sort(),q.answer.slice().sort())?'answered-correct':'answered-wrong'):''}">
+<span class="domain-badge ${domainClasses[q.domain]}">${domainNames[q.domain]}</span>
+<div class="question-number">Question ${state.current+1}</div>
+<div class="question-text">${q.question}</div>
+<div class="question-type">${multi?'&#9656; Select ALL that apply':'&#9656; Single best answer'}</div>
+<ul class="options">${optionsHtml}</ul>
+${explHtml}
+</div>
+<div class="nav-buttons">
+<button class="btn btn-secondary" onclick="prevQ()" ${state.current===0?'disabled':''}>Previous</button>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+${!state.submitted&&answered?`<button class="btn btn-primary" onclick="submitExam()">Submit Exam</button>`:''}
+${state.submitted?`<button class="btn btn-secondary" onclick="toggleReview()">${state.showReview?'Hide':'Show'} Review</button>`:''}
+</div>
+<button class="btn btn-secondary" onclick="nextQ()" ${state.current===QUESTIONS.length-1?'disabled':''}>Next</button>
+</div>`;
+updateTimer();
+}
+
+function selectOption(i){
+if(state.submitted)return;
+const q=QUESTIONS[state.current];
+const multi=isMulti(q);
+let current=state.answers[state.current]||[];
+if(multi){
+if(current.includes(i))current=current.filter(x=>x!==i);
+else current.push(i);
+}else{
+current=[i];
+}
+state.answers[state.current]=current;
+renderQuestion();
+}
+
+function nextQ(){if(state.current<QUESTIONS.length-1){state.current++;renderQuestion()}}
+function prevQ(){if(state.current>0){state.current--;renderQuestion()}}
+function goTo(i){state.current=i;renderQuestion()}
+
+function submitExam(){
+if(!confirm('Submit your exam? You cannot change answers after submission.'))return;
+state.submitted=true;
+clearInterval(state.timer);
+renderResults();
+}
+
+function arraysEqual(a,b){if(a.length!==b.length)return false;for(let i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true}
+
+function renderResults(){
+let correct=0;const domainStats={1:{c:0,t:0},2:{c:0,t:0},3:{c:0,t:0},4:{c:0,t:0}};
+QUESTIONS.forEach((q,i)=>{
+domainStats[q.domain].t++;
+const userAns=(state.answers[i]||[]).slice().sort();
+const correctAns=q.answer.slice().sort();
+if(arraysEqual(userAns,correctAns)){correct++;domainStats[q.domain].c++}
+});
+const score=Math.round(correct/QUESTIONS.length*1000);
+const passed=score>=700;
+const m=Math.floor(state.seconds/60);const s=state.seconds%60;
+let domainCards=Object.keys(domainStats).map(d=>{
+const st=domainStats[d];const pct=st.t>0?Math.round(st.c/st.t*100):0;
+const color=pct>=70?'#4caf50':'#f44336';
+return`<div class="domain-result-card"><h4>${domainNames[d]}</h4><div class="score">${st.c}/${st.t} (${pct}%)</div><div class="bar"><div class="fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+}).join('');
+app.innerHTML=`
+<div class="results-screen">
+<h2>${passed?'Congratulations!':'Keep Studying!'}</h2>
+<div class="score-circle ${passed?'pass':'fail'}">${score}<small>out of 1000</small></div>
+<p style="font-size:1.2em;margin:10px 0">${correct} of ${QUESTIONS.length} correct (${Math.round(correct/QUESTIONS.length*100)}%)</p>
+<p style="color:#8899aa">Time: ${m}m ${s}s &bull; ${passed?'You passed!':'Passing score is 700'}</p>
+<div class="domain-results">${domainCards}</div>
+<div style="display:flex;gap:15px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="reviewExam()">Review Answers</button>
+<button class="btn btn-secondary" onclick="retakeExam()">Retake Exam</button>
+</div>
+</div>`;
+}
+
+function reviewExam(){
+state.showReview=true;state.current=0;renderQuestion();
+}
+
+function toggleReview(){
+state.showReview=!state.showReview;
+if(state.showReview)renderQuestion();
+else renderResults();
+}
+
+function retakeExam(){
+state={started:false,current:0,answers:{},submitted:false,timer:null,seconds:0,showReview:false};
+renderStart();
+}
+
+renderStart();
+</script>
+</body>
+</html>
