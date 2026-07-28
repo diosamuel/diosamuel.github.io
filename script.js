@@ -1,4 +1,7 @@
 window.addEventListener('load', function () {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('SW failed:', err));
+  }
   let window7 = document.querySelector(".drag-element")
   dragElement(window7)
   nyanRun(window7)
