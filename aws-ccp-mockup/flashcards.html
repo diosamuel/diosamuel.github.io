@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS CCP Flashcards - CLF-C02</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;perspective:1000px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f1b2d;color:#e1e8f0;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:20px}
+header{text-align:center;padding:30px 0;border-bottom:2px solid #ff9900}
+header h1{color:#ff9900;font-size:2em;margin-bottom:8px}
+header p{color:#8899aa;font-size:0.95em}
+.back-link{display:inline-block;margin:15px 0;padding:8px 18px;background:#1e3a5f;color:#e1e8f0;border:1px solid #2a4a6f;border-radius:8px;text-decoration:none;font-size:0.9em;transition:all 0.2s}
+.back-link:hover{background:#2a4a6f;border-color:#ff9900}
+.controls{margin:25px 0;display:flex;flex-direction:column;gap:14px}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.filter-btn{padding:8px 16px;border:1px solid #1e3a5f;background:#162a45;color:#aabbcc;border-radius:20px;cursor:pointer;font-size:0.8em;transition:all 0.2s;font-weight:600}
+.filter-btn:hover{border-color:#ff9900;color:#ff9900}
+.filter-btn.active{background:#ff9900;color:#0f1b2d;border-color:#ff9900}
+.deck-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.mode-btn{padding:8px 14px;border:1px solid #1e3a5f;background:#162a45;color:#aabbcc;border-radius:8px;cursor:pointer;font-size:0.82em;transition:all 0.2s}
+.mode-btn.active{background:#1e3a5f;color:#e1e8f0;border-color:#2a4a6f}
+.progress{display:flex;justify-content:space-between;font-size:0.85em;color:#8899aa;margin-bottom:8px;flex-wrap:wrap;gap:5px}
+.progress span{color:#ff9900;font-weight:700}
+.progress-bar{width:100%;height:4px;background:#1e3a5f;border-radius:2px;overflow:hidden;margin-bottom:20px}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#ff9900,#ffb84d);transition:width 0.4s}
+/* Flip card */
+.flashcard-wrap{cursor:pointer;min-height:380px;margin:20px 0}
+.flashcard{position:relative;min-height:380px;transition:transform 0.7s;transform-style:preserve-3d}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;top:0;left:0;width:100%;min-height:380px;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:#162a45;border:2px solid #1e3a5f;border-radius:16px;padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.card-front .anni-style{font-size:0.7em;color:#8899aa;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.badge{display:inline-block;padding:4px 12px;background:#1e3a5f;color:#ff9900;border-radius:14px;font-size:0.7em;font-weight:700;margin-bottom:16px;text-transform:uppercase}
+.card-front .q-name{font-size:1.7em;font-weight:700;color:#e1e8f0;line-height:1.3}
+.card-front .hint{margin-top:14px;font-size:0.75em;color:#ff9900;opacity:0.8}
+.card-back{transform:rotateY(180deg);border-color:#ff9900}
+.card-back .answer-label{font-size:0.7em;color:#ff9900;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;font-weight:700}
+.card-back .answer-text{font-size:1em;line-height:1.7;color:#e1e8f0;text-align:left}
+.buttons{display:flex;gap:10px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.btn{padding:12px 22px;border:none;border-radius:8px;font-size:0.95em;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-amzn{background:#ff9900;color:#0f1b2d}
+.btn-amzn:hover{background:#ffb84d}
+.btn-second{background:#1e3a5f;color:#e1e8f0;border:1px solid #2a4a6f}
+.btn-second:hover{background:#2a4a6f}
+.btn-judge{padding:12px 32px}
+.btn-good{background:#1a3a2a;color:#4caf50;border:1px solid #4caf50}
+.btn-good:hover{background:#4caf50;color:#fff}
+.btn-bad{background:#3a1a1a;color:#f44336;border:1px solid #f44336}
+.btn-bad:hover{background:#f44336;color:#fff}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.empty-state{text-align:center;padding:60px 20px;color:#5a7a9a}
+.empty-state h3{color:#ff9900;margin-bottom:10px}
+.keyhint{font-size:0.78em;color:#5a7a9a;margin-top:12px;text-align:center}
+.keyhint kbd{background:#1e3a5f;padding:2px 8px;border-radius:4px;font-family:monospace;border:1px solid #2a4a6f;color:#aabbcc}
+.shuffle-status{font-size:0.85em;color:#5a7a9a;text-align:center;margin-top:6px}
+@media(max-width:600px){
+  .container{padding:10px}
+  header h1{font-size:1.5em}
+  .flashcard,.flashcard-wrap,.card-face{min-height:340px}
+  .card-front .q-name{font-size:1.35em}
+  .card-back .answer-text{font-size:0.92em}
+  .btn{padding:10px 16px;font-size:0.88em}
+  .filter-btn{padding:5px 10px;font-size:0.72em}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AWS CCP Flashcards</h1>
+<p>CLF-C02 &mdash; Anki-style Deck for memorizing AWS services</p>
+<a href="index.html" class="back-link">&larr; Back to Mock Exam</a>
+</header>
+
+<div class="controls">
+<div>
+<div style="text-align:center;font-size:0.85em;color:#8899aa;margin-bottom:10px">Choose a category deck</div>
+<div class="filter-row" id="filter-row"></div>
+</div>
+</div>
+
+<div id="deck"></div>
+
+<footer style="text-align:center;padding:30px 0">
+<a href="index.html" class="back-link">&larr; Mock Exam</a>
+<a href="glossary.html" class="back-link">Glossary</a>
+<a href="cheatsheet.html" class="back-link">Cheatsheet</a>
+</footer>
+</div>
+
+<script src="glossary.js"></script>
+<script>
+// Build flat list of cards from glossary
+let cards = [];
+let deck = []; // shuffled copy
+let idx = 0;
+let flipped = false;
+let mode = 'flip'; // 'flip' | 'review'
+let currentCategory = 'all';
+
+function rebuildDeck() {
+  cards = [];
+  GLOSSARY.forEach(cat => {
+    cat.services.forEach((s, i) => {
+      cards.push({
+        name: s.name,
+        desc: s.desc,
+        category: cat.category,
+        color: cat.color
+      });
+    });
+  });
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildCategoryButtons() {
+  const row = document.getElementById('filter-row');
+  const cats = ['all', ...GLOSSARY.map(c => c.category)];
+  row.innerHTML = cats.map(c => {
+    const count = c === 'all' ? cards.length : cards.filter(x => x.category === c).length;
+    return `<button class="filter-btn ${c === currentCategory ? 'active' : ''}" onclick="selectCategory('${c.replace(/'/g, "\\'")}')">${c} (${count})</button>`;
+  }).join('');
+}
+
+function selectCategory(cat) {
+  currentCategory = cat;
+  buildCategoryButtons();
+  reload();
+}
+
+function reload() {
+  let pool = currentCategory === 'all' ? cards.slice() : cards.filter(x => x.category === currentCategory);
+  deck = shuffleArray(pool);
+  idx = 0;
+  flipped = false;
+  render();
+}
+
+function flip() {
+  if (deck.length === 0) return;
+  flipped = !flipped;
+  const card = document.querySelector('.flashcard');
+  if (card) card.classList.toggle('flipped');
+}
+
+function nextCard() { if (idx < deck.length - 1) { idx++; flipped = false; render(); } }
+function prevCard() { if (idx > 0) { idx--; flipped = false; render(); } }
+
+function shuffle() { reload(); }
+
+function markGood() { nextCard(); }
+function markBad() {
+  // move current card to end for review
+  if (deck.length === 0) return;
+  const cur = deck.splice(idx, 1)[0];
+  deck.push(cur);
+  if (idx >= deck.length) idx = deck.length - 1;
+  flipped = false;
+  render();
+}
+
+function render() {
+  const el = document.getElementById('deck');
+  if (deck.length === 0) {
+    el.innerHTML = '<div class="empty-state"><h3>No cards in this deck</h3><p>Select another category above.</p></div>';
+    return;
+  }
+  const card = deck[idx];
+  const isLast = idx === deck.length - 1;
+  const isFirst = idx === 0;
+  const pct = ((idx + 1) / deck.length * 100).toFixed(0);
+
+  el.innerHTML = `
+    <div class="progress">
+      <div>Card <span>${idx + 1}</span> / <span>${deck.length}</span></div>
+      <div>Category: <span>${card.category}</span></div>
+      <div>Total set: <span>${cards.length}</span></div>
+    </div>
+    <div class="progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+
+    <div class="flashcard-wrap" onclick="flip()">
+      <div class="flashcard ${flipped ? 'flipped' : ''}">
+        <div class="card-face card-front" style="border-color:${card.color}">
+          <div class="anni-style">&#9874; AWS Service Flashcard</div>
+          <span class="badge" style="background:${card.color}22;color:${card.color}">${card.category}</span>
+          <div class="q-name">${card.name}</div>
+          <div class="hint">Click card or press Space to reveal answer</div>
+        </div>
+        <div class="card-face card-back" style="border-color:${card.color}">
+          <div class="answer-label">&#9656; ${card.name}</div>
+          <div class="answer-text">${card.desc}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-second btn-judge" onclick="prevCard()" ${isFirst ? 'disabled' : ''}>&larr; Prev</button>
+      <button class="btn btn-amzn btn-judge" onclick="flip()">${flipped ? 'Hide' : 'Reveal'}</button>
+      <button class="btn btn-second btn-judge" onclick="nextCard()" ${isLast ? 'disabled' : ''}>Next &rarr;</button>
+    </div>
+
+    ${flipped ? `
+      <div class="buttons">
+        <button class="btn btn-good btn-judge" onclick="markGood()">&#10003; Known &mdash; Next</button>
+        <button class="btn btn-bad btn-judge" onclick="markBad()">&#10007; Review Again</button>
+      </div>
+    ` : ''}
+
+    <div class="buttons">
+      <button class="btn btn-second" onclick="shuffle()">&#x1F502; Shuffle Deck</button>
+    </div>
+
+    <div class="keyhint">
+      Keys: <kbd>Space</kbd> reveal &middot; <kbd>&larr;</kbd> prev &middot; <kbd>&rarr;</kbd> next &middot; <kbd>S</kbd> shuffle
+    </div>
+    <div class="shuffle-status">Deck shuffled on load &amp; on request. Mode: click the card to flip, then self-judge.</div>
+  `;
+}
+
+rebuildDeck();
+buildCategoryButtons();
+reload();
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); flip(); }
+  else if (e.code === 'ArrowLeft') prevCard();
+  else if (e.code === 'ArrowRight') nextCard();
+  else if (e.code === 'KeyR' && flipped) markGood();
+  else if (e.code === 'KeyW' && flipped) markBad();
+  else if (e.code === 'KeyB' && flipped) markBad();
+  else if (e.code === 'KeyG' && flipped) markGood();
+  else if (e.code === 'KeyS') shuffle();
+});
+</script>
+</body>
+</html>

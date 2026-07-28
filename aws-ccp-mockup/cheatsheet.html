@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS CCP Cheatsheet - CLF-C02</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f1b2d;color:#e1e8f0;min-height:100vh}
+.container{max-width:1000px;margin:0 auto;padding:20px}
+header{text-align:center;padding:30px 0;border-bottom:2px solid #ff9900}
+header h1{color:#ff9900;font-size:2em;margin-bottom:8px}
+header p{color:#8899aa;font-size:0.95em}
+.back-link{display:inline-block;margin:15px 0;padding:8px 18px;background:#1e3a5f;color:#e1e8f0;border:1px solid #2a4a6f;border-radius:8px;text-decoration:none;font-size:0.9em;transition:all 0.2s}
+.back-link:hover{background:#2a4a6f;border-color:#ff9900}
+.nav-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.nav-row a{padding:8px 16px;background:#162a45;border:1px solid #1e3a5f;border-radius:20px;color:#aabbcc;text-decoration:none;font-size:0.85em;transition:all 0.2s}
+.nav-row a:hover{border-color:#ff9900;color:#ff9900}
+.section{background:#162a45;border:1px solid #1e3a5f;border-radius:12px;padding:24px;margin:20px 0;scroll-margin-top:20px}
+.section-title{color:#ff9900;font-size:1.25em;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #1e3a5f}
+table{width:100%;border-collapse:collapse;font-size:0.9em}
+th{background:#1e3a5f;padding:10px 12px;text-align:left;color:#e1e8f0;font-weight:600;border-radius:4px}
+td{padding:9px 12px;border-bottom:1px solid #1a2a3f;vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1a3050}
+td strong{color:#ff9900;font-weight:600}
+.facts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.fact-card{background:#1a3050;padding:14px;border-radius:8px;border:1px solid #1e3a5f}
+.fact-card .label{font-size:0.75em;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.fact-card .value{font-size:1.05em;font-weight:600;color:#ff9900}
+.pillars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pillar-card{background:#1a3050;border-radius:10px;padding:16px;border-left:4px solid #999}
+.pillar-card .name{font-weight:700;font-size:1em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.pillar-card .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:0.7em;font-weight:700;color:#fff}
+.pillar-card .points{font-size:0.85em;line-height:1.55;color:#aabbcc}
+.tips-list{display:flex;flex-direction:column;gap:10px}
+.tip{padding:12px 16px;background:#1a3050;border-left:4px solid #ff9900;border-radius:0 8px 8px 0;font-size:0.9em;line-height:1.55}
+.tip .cat{display:inline-block;padding:2px 10px;border-radius:10px;background:#1e3a5f;color:#ff9900;font-size:0.72em;font-weight:600;margin-right:8px;text-transform:uppercase}
+.color-tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:0.78em;font-weight:600}
+.storage-table tr td:first-child{font-weight:700;color:#e1e8f0}
+@media(max-width:600px){.container{padding:10px}.section{padding:16px}.facts-grid{grid-template-columns:1fr 1fr}.pillars-grid{grid-template-columns:1fr}table{font-size:0.82em}th,td{padding:6px 8px}.nav-row a{padding:6px 12px;font-size:0.78em}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AWS CCP Cheatsheet</h1>
+<p>CLF-C02 Quick Reference, Tips &amp; Tricks</p>
+<a href="index.html" class="back-link">&larr; Back to Mock Exam</a>
+</header>
+
+<div class="nav-row">
+<a href="#exam">Exam Facts</a>
+<a href="#domains">Domains</a>
+<a href="#pillars">6 Pillars</a>
+<a href="#migration">6 Rs</a>
+<a href="#ec2pricing">EC2 Pricing</a>
+<a href="#s3">S3 Classes</a>
+<a href="#shared">Shared Resp.</a>
+<a href="#iam">IAM</a>
+<a href="#security">Security Services</a>
+<a href="#storage">Storage</a>
+<a href="#databases">Databases</a>
+<a href="#networking">Networking</a>
+<a href="#loadbalancers">Load Balancers</a>
+<a href="#compute">Compute</a>
+<a href="#support">Support Plans</a>
+<a href="#cost">Cost Tools</a>
+<a href="#snow">Snow Family</a>
+<a href="#globalvszonal">Global vs Zonal</a>
+<a href="#instancetype">EC2 Instance Types</a>
+<a href="#ai">AI/ML Services</a>
+<a href="#analytics">Analytics</a>
+<a href="#tips">Tips &amp; Tricks</a>
+<a href="flashcards.html" style="border-color:#ff9900;color:#ff9900">Flashcards &rarr;</a>
+</div>
+
+<div id="cheatsheet-app"></div>
+
+<footer style="text-align:center;padding:30px 0">
+<a href="index.html" class="back-link">&larr; Back to Mock Exam</a>
+<a href="glossary.html" class="back-link">Service Glossary</a>
+<a href="flashcards.html" class="back-link">Flashcards</a>
+</footer>
+</div>
+<script src="cheatsheet.js"></script>
+<script>
+const app = document.getElementById('cheatsheet-app');
+const C = CHEATSHEET;
+
+// Exam Facts
+let html = `
+<section class="section" id="exam">
+<div class="section-title">Exam Facts</div>
+<div class="facts-grid">
+${C.examFacts.map(f => `<div class="fact-card"><div class="label">${f.label}</div><div class="value">${f.value}</div></div>`).join('')}
+</div>
+</section>
+
+<section class="section" id="domains">
+<div class="section-title">Domain Weighting</div>
+<table>
+<thead><tr><th>Domain</th><th>Weight</th><th>Study Tip</th></tr></thead>
+<tbody>
+${C.domainWeight.map(d => `<tr><td><strong>${d.domain}</strong></td><td>${d.weight}</td><td>${d.tip}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="pillars">
+<div class="section-title">AWS Well-Architected Framework &mdash; 6 Pillars</div>
+<div class="pillars-grid">
+${C.pillars.map(p => `
+<div class="pillar-card" style="border-left-color:${p.color}">
+<div class="name"><span class="badge" style="background:${p.color}">${p.emoji}</span>${p.name}</div>
+<div class="points">${p.points}</div>
+</div>`).join('')}
+</div>
+</section>
+
+<section class="section" id="migration">
+<div class="section-title">6 Rs &mdash; Migration Strategies</div>
+<table>
+<thead><tr><th>Strategy</th><th>Also Known As</th><th>Description</th></tr></thead>
+<tbody>
+${C.migrationStrategies.map(m => `<tr><td><strong>${m.code}</strong></td><td>${m.aka}</td><td>${m.desc}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="ec2pricing">
+<div class="section-title">EC2 Pricing Options</div>
+<table>
+<thead><tr><th>Option</th><th>Description</th><th>Discount</th></tr></thead>
+<tbody>
+${C.ec2Pricing.map(p => `<tr><td><strong>${p.option}</strong></td><td>${p.desc}</td><td><span class="color-tag" style="background:#1a3a2a;color:#4caf50">${p.discount}</span></td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="s3">
+<div class="section-title">S3 Storage Classes</div>
+<table>
+<thead><tr><th>Class</th><th>Description</th><th>Retrieval</th></tr></thead>
+<tbody>
+${C.s3StorageClasses.map(s => `<tr><td><strong>${s.name}</strong></td><td>${s.desc}</td><td>${s.retrieval}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="shared">
+<div class="section-title">AWS Shared Responsibility Model</div>
+<table>
+<thead><tr><th>Area</th><th>Responsibilities</th></tr></thead>
+<tbody>
+${C.sharedResponsibility.map(s => `<tr><td><strong>${s.area}</strong></td><td>${s.responsibilities}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="iam">
+<div class="section-title">IAM Entities</div>
+<table>
+<thead><tr><th>Entity</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+${C.iamEntities.map(i => `<tr><td><strong>${i.entity}</strong></td><td>${i.desc}</td><td><span class="color-tag" style="background:#1a2a3a;color:#2196f3">${i.example}</span></td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="security">
+<div class="section-title">Key Security Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th><th>Notes</th></tr></thead>
+<tbody>
+${C.securityServices.map(s => `<tr><td><strong>${s.service}</strong></td><td>${s.use}</td><td>${s.layerNote}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="storage">
+<div class="section-title">Storage Comparison</div>
+<table class="storage-table">
+<thead><tr><th>Service</th><th>Type</th><th>Durability</th><th>Scale</th><th>Best For</th></tr></thead>
+<tbody>
+${C.storageComparison.map(s => `<tr><td><strong>${s.service}</strong></td><td>${s.type}</td><td>${s.durability}</td><td>${s.scale}</td><td>${s.bestFor}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="databases">
+<div class="section-title">Database Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th><th>Engines / Notes</th></tr></thead>
+<tbody>
+${C.databaseServices.map(d => `<tr><td><strong>${d.service}</strong></td><td>${d.use}</td><td>${d.engines}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="networking">
+<div class="section-title">Networking Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th></tr></thead>
+<tbody>
+${C.networking.map(n => `<tr><td><strong>${n.service}</strong></td><td>${n.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="loadbalancers">
+<div class="section-title">Load Balancers</div>
+<table>
+<thead><tr><th>Load Balancer</th><th>Layer</th><th>Best For</th></tr></thead>
+<tbody>
+${C.loadBalancers.map(l => `<tr><td><strong>${l.lb}</strong></td><td>${l.layer}</td><td>${l.best}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="compute">
+<div class="section-title">Compute Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th></tr></thead>
+<tbody>
+${C.compute.map(c => `<tr><td><strong>${c.service}</strong></td><td>${c.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="support">
+<div class="section-title">AWS Support Plans</div>
+<table>
+<thead><tr><th>Plan</th><th>Cost</th><th>Response Time</th><th>Key Features</th></tr></thead>
+<tbody>
+${C.supportPlans.map(s => `<tr><td><strong>${s.plan}</strong></td><td>${s.cost}</td><td>${s.response}</td><td>${s.features}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="cost">
+<div class="section-title">Cost Management Tools</div>
+<table>
+<thead><tr><th>Tool</th><th>Use</th></tr></thead>
+<tbody>
+${C.costTools.map(c => `<tr><td><strong>${c.tool}</strong></td><td>${c.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="snow">
+<div class="section-title">AWS Snow Family</div>
+<table>
+<thead><tr><th>Device</th><th>Capacity</th><th>Compute</th><th>Use Case</th></tr></thead>
+<tbody>
+${C.snowFamily.map(s => `<tr><td><strong>${s.device}</strong></td><td>${s.capacity}</td><td>${s.compute}</td><td>${s.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="globalvszonal">
+<div class="section-title">Global vs Zonal Services</div>
+<table>
+<thead><tr><th>Type</th><th>Services</th></tr></thead>
+<tbody>
+${C.globalVsZonal.map(g => `<tr><td><strong>${g.type}</strong></td><td>${g.list}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="instancetype">
+<div class="section-title">EC2 Instance Type Families</div>
+<table>
+<thead><tr><th>Family</th><th>Code</th><th>Use Case</th></tr></thead>
+<tbody>
+${C.ec2InstanceTypes.map(t => `<tr><td><strong>${t.family}</strong></td><td><span class="color-tag" style="background:#1a2a3a;color:#2196f3">${t.code}</span></td><td>${t.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="ai">
+<div class="section-title">AI/ML Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th></tr></thead>
+<tbody>
+${C.aiMlServices.map(a => `<tr><td><strong>${a.service}</strong></td><td>${a.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="analytics">
+<div class="section-title">Analytics Services</div>
+<table>
+<thead><tr><th>Service</th><th>Use</th></tr></thead>
+<tbody>
+${C.analyticsServices.map(a => `<tr><td><strong>${a.service}</strong></td><td>${a.use}</td></tr>`).join('')}
+</tbody>
+</table>
+</section>
+
+<section class="section" id="tips">
+<div class="section-title">Tips &amp; Tricks (${C.tips.length})</div>
+<div class="tips-list">
+${C.tips.map(t => `<div class="tip"><span class="cat">${t.category}</span>${t.tip}</div>`).join('')}
+</div>
+</section>
+`;
+
+app.innerHTML = html;
+</script>
+</body>
+</html>
