@@ -2,6 +2,27 @@ window.addEventListener('load', function () {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('SW failed:', err));
   }
+
+  let deferredPrompt = null;
+  const a2hsBtn = document.getElementById('a2hs');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (a2hsBtn) a2hsBtn.hidden = false;
+  });
+  if (a2hsBtn) {
+    a2hsBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') console.log('A2HS accepted');
+      deferredPrompt = null;
+      a2hsBtn.hidden = true;
+    });
+  }
+  window.addEventListener('appinstalled', () => {
+    if (a2hsBtn) a2hsBtn.hidden = true;
+  });
   let window7 = document.querySelector(".drag-element")
   dragElement(window7)
   nyanRun(window7)
